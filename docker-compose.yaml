@@ -1,13 +1,14 @@
 version: '3.8'
 
 services:
-  database_service:
+  backend:
     build: .
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn app.main:app --host 0.0.0.0'
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - db
 

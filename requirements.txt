@@ -3,5 +3,9 @@ sqlalchemy
 uvicorn
 pydantic
 alembic
-# psycopg2
-psycopg2-binary
+psycopg2
+# psycopg2-binary
+python-multipart
+python-jose[cryptography]
+passlib
+bcrypt
