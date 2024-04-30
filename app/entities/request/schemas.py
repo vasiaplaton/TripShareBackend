@@ -1,15 +1,31 @@
-from sqlalchemy import ForeignKey, Column, Integer, String, DateTime, Enum
+from datetime import datetime
 
-from app.database import Base
+from pydantic import BaseModel
+
 from app.entities.enums import RequestStatus
 
 
-class Request(Base):
-    __tablename__ = "requests"
+class Request(BaseModel):
+    cost: str
+    number_of_seats: str
+    departure_id: str
+    arrival_id: str
+    trip_id: str
 
-    id = Column(Integer, primary_key=True)
 
-    request_datetime = Column(DateTime, nullable=False)
+class RequestGot(Request):
+    pass
+
+
+class RequestReturn(Request):
+    id: int
+    request_datetime: datetime
+    status: RequestStatus
+    status_change_datetime: datetime
+
+
+"""
+request_datetime = Column(DateTime, nullable=False)
     status = Column(Enum(RequestStatus), nullable=False)
     status_change_datetime = Column(DateTime, nullable=True)
     cost = Column(Integer, nullable=False)
@@ -19,4 +35,4 @@ class Request(Base):
     arrival_id = Column(Integer, ForeignKey("stops.id", ondelete='CASCADE'), nullable=False)
 
     user_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
-    trip_id = Column(Integer, ForeignKey("trips.id", ondelete='CASCADE'), nullable=False)
+    trip_id = Column(Integer, ForeignKey("trips.id", ondelete='CASCADE'), nullable=False)"""

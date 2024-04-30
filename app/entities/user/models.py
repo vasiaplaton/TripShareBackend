@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 from app.database import Base
+from app.entities.images.models import Image
 
 
 class User(Base):
@@ -20,4 +21,4 @@ class User(Base):
     attitude_towards_smoking = Column(Integer, nullable=True)
     attitude_towards_animals_during_the_trip = Column(Integer, nullable=True)
 
-    avatar_path = Column(String, nullable=True)
+    avatar_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=False)
