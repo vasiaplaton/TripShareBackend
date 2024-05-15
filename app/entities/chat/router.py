@@ -2,30 +2,28 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from . import schemas
-from . import controller
-from ..user.controller import User
+from app.entities.chat import schemas
+from app.entities.chat.crud import ChatCRUD
+from app.entities.chat.schemas import ChatMessage, ChatMessageCreate
+from app.entities.user.controller import User
 
-car_router = APIRouter(
-    prefix="/cars",
-    tags=["cars"]
+chat_router = APIRouter(
+    prefix="/chat",
+    tags=["chat"]
 )
 
 
-@car_router.post("/")
-async def create_car(schema: schemas.CarGot,
-                     current_user: Annotated[User, Depends(User.get_current_user)]) -> schemas.CarReturn:
-    """Добавляем машину пользователю"""
-    return controller.Car.create(schemas.CarCreate(**schema.dict(), user_id=current_user.schema.id)).schema
+@chat_router.get("/me", response_model=list[schemas.Chat])
+async def get_chats_by_user_id(current_user: Annotated[User, Depends(User.get_current_user)]):
+    return ChatCRUD().get_chats_by_user_id(current_user.schema.id)
 
 
-@car_router.get("/me")
-async def get_my_cars(current_user: Annotated[User, Depends(User.get_current_user)]) -> list[schemas.CarReturn]:
-    """Получаем текущего машины пользователя"""
-    return controller.Car.found_for_user(current_user.schema.id)
+@chat_router.post("/messages", response_model=ChatMessage)
+async def create_message(sender_id: int, receiver_id: int, message: ChatMessageCreate):
+    return ChatCRUD().create_message(message, sender_id, receiver_id)
 
 
-@car_router.get("/user/{user_id}")
-async def create_car(user_id: int):
-    """Получаем машины пользователя"""
-    return controller.Car.found_for_user(user_id)
+@chat_router.get("/{chat_id}/messages", response_model=list[ChatMessage])
+async def get_messages_by_chat_id(chat_id: int):
+    chat_crud = ChatCRUD()
+    return chat_crud.get_messages_by_chat_id(chat_id)

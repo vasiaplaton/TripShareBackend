@@ -1,18 +1,6 @@
 from pydantic import BaseModel
 
 
-class ChatCreate(BaseModel):
-    user_id_1: int
-    user_id_2: int
-
-
-class ChatReturn(ChatCreate):
-    id: int
-
-
-class RequestCreate(BaseModel):
-    pass
-
 """
 class Request(Base):
     __tablename__ = "requests"
