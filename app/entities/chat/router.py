@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.entities.chat import schemas
 from app.entities.chat.crud import ChatCRUD
@@ -19,8 +19,11 @@ async def get_chats_by_user_id(current_user: Annotated[User, Depends(User.get_cu
 
 
 @chat_router.post("/messages", response_model=ChatMessage)
-async def create_message(sender_id: int, receiver_id: int, message: ChatMessageCreate):
-    return ChatCRUD().create_message(message, sender_id, receiver_id)
+async def create_message(receiver_id: int, message: ChatMessageCreate, current_user: Annotated[User, Depends(User.get_current_user)]):
+    try:
+        return ChatCRUD().create_message(message, current_user.schema.id, receiver_id)
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
 
 
 @chat_router.get("/{chat_id}/messages", response_model=list[ChatMessage])

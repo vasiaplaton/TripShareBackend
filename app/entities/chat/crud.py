@@ -2,6 +2,7 @@ from sqlalchemy import or_
 
 from app.database import SessionLocal
 from app.entities.chat import models, schemas
+from app.entities.user.models import User
 
 
 class ChatCRUD:
@@ -34,11 +35,19 @@ class ChatCRUD:
         return chat
 
     def create_message(self, message: schemas.ChatMessageCreate, sender_id: int, receiver_id: int) -> models.ChatMessage:
+        user1 = self.db.query(User).get(sender_id)
+        if not user1:
+            raise ValueError("Sender with id {} not found".format(sender_id))
+
+        user1 = self.db.query(User).get(receiver_id)
+        if not user1:
+            raise ValueError("Receiver with id {} not found".format(receiver_id))
+
         # Find or create chat
         chat = self.find_or_create_chat(sender_id, receiver_id)
 
         # Create message
-        db_message = models.ChatMessage(**message.dict(), chat_id=chat.id)
+        db_message = models.ChatMessage(**message.dict(), chat_id=chat.id, sender_id=sender_id)
         self.db.add(db_message)
         self.db.commit()
         self.db.refresh(db_message)

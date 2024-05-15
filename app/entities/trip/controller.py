@@ -66,3 +66,8 @@ class Trip:
         return stops_got
 
 
+    @classmethod
+    def find_trips(cls, place_start: str, place_end: str):
+        trips = cls.db.query(cls.model).all()
+        return trips
+

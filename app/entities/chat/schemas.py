@@ -18,8 +18,6 @@ class Chat(ChatBase):
 class ChatMessageBase(BaseModel):
     text: Optional[str] = None
     image_id: Optional[int] = None
-    sender_id: int
-    chat_id: int
 
 
 class ChatMessageCreate(ChatMessageBase):
@@ -28,3 +26,5 @@ class ChatMessageCreate(ChatMessageBase):
 
 class ChatMessage(ChatMessageBase):
     id: int
+    sender_id: int
+    chat_id: int

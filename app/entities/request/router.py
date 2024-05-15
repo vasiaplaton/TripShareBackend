@@ -2,8 +2,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from . import schemas
-from . import controller
 from .crud import RequestCRUD
 from .schemas import RequestReturn, RequestCreate
 from ..user.controller import User
