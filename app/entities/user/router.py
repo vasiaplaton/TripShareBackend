@@ -2,12 +2,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 from starlette import status
 
 from . import schemas
 from . import controller
 from app.controllers.exceptions import NotFound
 from app.security import Token
+from ...dependencies import get_db
 
 user_router = APIRouter(
     prefix="/users",
@@ -18,6 +20,7 @@ user_router = APIRouter(
 @user_router.post("/token")
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db: Session = Depends(get_db)
 ) -> Token:
     """Логинимся для получения токена"""
     exc = HTTPException(
@@ -26,7 +29,7 @@ async def login_for_access_token(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        user = controller.User.from_phone(form_data.username)
+        user = controller.User.from_phone(form_data.username, db)
         if not user.verify_password(form_data.password):
             raise exc
     except NotFound:
@@ -38,9 +41,9 @@ async def login_for_access_token(
 
 
 @user_router.post("/")
-async def register_user(schema: schemas.UserCreate) -> schemas.UserReturn:
+async def register_user(schema: schemas.UserCreate, db: Session = Depends(get_db)) -> schemas.UserReturn:
     """Регистрируемся"""
-    return controller.User.create(schema).schema
+    return controller.User.create(schema, db).schema
 
 
 @user_router.get("/me")
@@ -55,6 +58,7 @@ async def read_users_me(
 async def read_users_me(
         schema: schemas.UserUpdate,
         current_user: Annotated[controller.User, Depends(controller.User.get_current_user)],
+        db: Session = Depends(get_db)
 ) -> schemas.UserReturn:
     """Обновляем свои данные"""
-    return current_user.update(schema)
+    return current_user.update(schema, db)
