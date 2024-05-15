@@ -14,6 +14,13 @@ class User(Base):
     password_hash = Column(String, nullable=False)
 
     name = Column(String, nullable=False)
+
+    surname = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    birthday = Column(String, nullable=False)
+    musicPreferences = Column(String, nullable=True)
+    info = Column(String, nullable=True)
+
     rating = Column(Integer, nullable=True)
 
     # favorite genres

@@ -7,6 +7,13 @@ class UserBase(BaseModel):
     # TODO validate phone
     phone: str
     name: str
+
+    surname: str
+    email: Optional[str] = None
+    birthday: str
+    musicPreferences: Optional[str] = None
+    info: Optional[str] = None
+    
     talkativeness: Optional[int] = Field(None, ge=0, le=10)
     attitude_towards_smoking: Optional[int] = Field(None, ge=0, le=10)
     attitude_towards_animals_during_the_trip: Optional[int] = Field(None, ge=0, le=10)
