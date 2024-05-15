@@ -6,6 +6,7 @@ from app.entities.enums import RequestStatus
 from app.entities.request import models
 from app.entities.request.schemas import RequestCreate
 from app.entities.trip import models as trip_models
+from app.entities.trip.controller import Trip
 
 
 class RequestCRUD:
@@ -13,6 +14,8 @@ class RequestCRUD:
         self.db = db
 
     def create(self, req: RequestCreate):
+
+        trip = Trip(req.trip_id)
         # Получаем информацию о поездке
         trip = self.db.query(trip_models.Trip).get(req.trip_id)
         if not trip:
