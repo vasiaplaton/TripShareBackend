@@ -84,12 +84,11 @@ class User:
         if user:
             raise AlreadyExists()
 
-        # TODO avatar
         password_hash = get_password_hash(schema.password)
 
         db_user = cls.model(
             **schema.dict(exclude={'password', 'avatar'}),
-            avatar_path=None,
+            avatar_id=None,
             password_hash=password_hash
         )
 

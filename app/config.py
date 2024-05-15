@@ -8,5 +8,5 @@ class Settings(BaseSettings):
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 1
-
+IMAGES_FOLDER = "images/"
 settings = Settings()
