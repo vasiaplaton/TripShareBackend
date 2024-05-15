@@ -88,7 +88,6 @@ class User:
 
         db_user = cls.model(
             **schema.dict(exclude={'password', 'avatar'}),
-            avatar_id=None,
             password_hash=password_hash
         )
 
