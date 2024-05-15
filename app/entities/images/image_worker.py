@@ -7,6 +7,10 @@ from PIL import Image
 from app.config import IMAGES_FOLDER
 
 
+def id_to_path(idd: int):
+    return os.path.join(IMAGES_FOLDER, str(idd) + ".jpg")
+
+
 def convert_base64_to_image(base64_string):
     # Decode base64 string to bytes
     image_data = base64.b64decode(base64_string)
@@ -37,12 +41,12 @@ def resize_image(img: Image, max_dimension=512):
     return img
 
 
-def save_image(img: Image, filename):
-    img.save(os.path.join(IMAGES_FOLDER, filename))
+def save_image(img: Image, idd: int):
+    img.save(id_to_path(idd))
 
 
-def open_image(filename):
-    with open(os.path.join(IMAGES_FOLDER, filename), "rb") as f:
+def open_image(idd: int):
+    with open(id_to_path(idd), "rb") as f:
         image_data = f.read()
     return image_data
 

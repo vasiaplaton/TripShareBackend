@@ -3,7 +3,7 @@ from PIL import UnidentifiedImageError
 from app.database import SessionLocal
 from app.entities.images import models
 from app.entities.images.image_worker import convert_base64_to_image, resize_image, save_image, open_image, \
-    encode_image_to_base64
+    encode_image_to_base64, check_and_convert_to_jpg
 
 
 class ImageError(Exception):
@@ -32,10 +32,10 @@ class Image:
             img = convert_base64_to_image(base64_file)
         except UnidentifiedImageError:
             raise Image
-
+        img = check_and_convert_to_jpg(img)
         img = resize_image(img)
 
-        db_img = cls.model()
+        db_img = cls.model(filename="Not impl")
         cls.db.add(db_img)
         cls.db.commit()
         cls.db.refresh(db_img)
