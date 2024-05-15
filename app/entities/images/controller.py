@@ -16,11 +16,10 @@ class ImageNotFound(Exception):
 
 class Image:
     model = models.Image
-    db = SessionLocal()
     dir = "images/"
 
     @classmethod
-    def add_image(cls, base64_file: str) -> int:
+    def add_image(cls, base64_file: str, db: SessionLocal) -> int:
         """
         Метод для добавления картинки
         :param base64_file: jpg файл в кодировки base64
@@ -36,9 +35,9 @@ class Image:
         img = resize_image(img)
 
         db_img = cls.model(filename="Not impl")
-        cls.db.add(db_img)
-        cls.db.commit()
-        cls.db.refresh(db_img)
+        db.add(db_img)
+        db.commit()
+        db.refresh(db_img)
 
         save_image(img, db_img.id)
 

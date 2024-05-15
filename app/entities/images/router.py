@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
 
+from app.dependencies import get_db
 from app.entities.images.controller import ImageError, ImageNotFound, Image
 from app.entities.images.schemas import ImageSchema
 
@@ -10,9 +12,9 @@ image_router = APIRouter(
 
 
 @image_router.post("/", response_model=int)
-async def add_image(im: ImageSchema):
+async def add_image(im: ImageSchema, db: Session = Depends(get_db) ):
     try:
-        image_id = Image.add_image(im.base64_file)
+        image_id = Image.add_image(im.base64_file, db)
         return image_id
     except ImageError:
         raise HTTPException(status_code=400, detail="Invalid image format")

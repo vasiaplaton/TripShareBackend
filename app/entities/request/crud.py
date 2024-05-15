@@ -9,8 +9,8 @@ from app.entities.trip import models as trip_models
 
 
 class RequestCRUD:
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db: SessionLocal):
+        self.db = db
 
     def create(self, req: RequestCreate):
         # Получаем информацию о поездке

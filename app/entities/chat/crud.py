@@ -6,8 +6,8 @@ from app.entities.user.models import User
 
 
 class ChatCRUD:
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db: SessionLocal):
+        self.db = db
 
     def get_chats_by_user_id(self, user_id: int) -> list[models.Chat]:
         return self.db.query(models.Chat).filter((models.Chat.user_id_1 == user_id) | (models.Chat.user_id_2 == user_id)).all()
