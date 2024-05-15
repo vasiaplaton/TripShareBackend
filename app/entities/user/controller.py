@@ -87,7 +87,7 @@ class User:
         password_hash = get_password_hash(schema.password)
 
         db_user = cls.model(
-            **schema.dict(exclude={'password', 'avatar'}),
+            **schema.dict(exclude={'password'}),
             password_hash=password_hash
         )
 
