@@ -38,5 +38,5 @@ class Car:
     @classmethod
     def found_for_user(cls, user_id: int) -> list[schemas.CarReturn]:
         cars = cls.db.query(cls.model).filter(cls.model.user_id == user_id).all()
-        cars_got = [cls(trip).schema for trip in cars]
+        cars_got = [cls(car.id).schema for car in cars]
         return cars_got

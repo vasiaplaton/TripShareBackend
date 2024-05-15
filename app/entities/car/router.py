@@ -13,7 +13,7 @@ car_router = APIRouter(
 
 
 @car_router.post("/")
-async def create_car(schema: schemas.CarCreate,
+async def create_car(schema: schemas.CarGot,
                      current_user: Annotated[User, Depends(User.get_current_user)]) -> schemas.CarReturn:
     """Добавляем машину пользователю"""
     return controller.Car.create(schemas.CarCreate(**schema.dict(), user_id=current_user.schema.id)).schema
@@ -26,6 +26,6 @@ async def get_my_cars(current_user: Annotated[User, Depends(User.get_current_use
 
 
 @car_router.get("/user/{user_id}")
-async def create_car(user_id: int):
+async def get_for_user(user_id: int):
     """Получаем машины пользователя"""
     return controller.Car.found_for_user(user_id)
