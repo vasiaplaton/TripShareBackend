@@ -32,6 +32,7 @@ from app.entities.user.models import User
 from app.entities.chat.models import Chat, ChatMessage
 from app.entities.request.models import Request
 from app.entities.review.models import Review
+from app.entities.images.models import Image
 """from app.entities.car.models import Base as CarBase
 from app.entities.stop.models import Base as StopBase
 from app.entities.trip.models import Base as TripBase

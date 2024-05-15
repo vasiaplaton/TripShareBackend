@@ -28,3 +28,6 @@ async def get_trips(current_user: Annotated[User, Depends(User.get_current_user)
 
 
 # TODO все поездки
+@trip_router.get("/search")
+async def search(place_start: str, place_end: str):
+    pass
