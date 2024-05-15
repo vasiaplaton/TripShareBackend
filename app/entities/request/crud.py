@@ -82,12 +82,15 @@ class RequestCRUD:
         elif new_status == models.RequestStatus.DECLINED.value:
             # Обновляем статус запроса на "DECLINED"
             request.status = models.RequestStatus.DECLINED.value
-            self.db.add(request)
+            self.db.commit()
         # Если новый статус запроса - "FINISHED"
         elif new_status == models.RequestStatus.FINISHED.value:
             # Обновляем статус запроса на "FINISHED"
             request.status = models.RequestStatus.FINISHED.value
-            self.db.add(request)
+            self.db.commit()
+
+        self.db.refresh(request)
+        return request
 
     def accept_request(self, request: models.Request, trip: trip_models.Trip):
         # Получаем все запросы для данной поездки со статусом "ACCEPTED" или "CREATED"
