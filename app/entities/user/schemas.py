@@ -14,7 +14,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    avatar: Optional[str] = None
+    avatar_id: Optional[int] = None
 
 
 class UserReturn(UserBase):

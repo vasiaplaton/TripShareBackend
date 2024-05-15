@@ -29,19 +29,17 @@ class RequestCRUD:
         occupied_seats = sum(req.number_of_seats for req in requests)
 
         # Подсчитываем количество свободных мест
-        available_seats = trip.total_seats - occupied_seats
+        available_seats = trip.max_passengers - occupied_seats
 
         # Проверяем, достаточно ли свободных мест для создания нового запроса
         if req.number_of_seats > available_seats:
             raise ValueError("Not enough available seats to create this request")
 
-        cost = random.randint(100, 1000)
-
         new_request = models.Request(
             request_datetime=datetime.now(),
             status=RequestStatus.CREATED,
             status_change_datetime=datetime.now(),
-            cost=cost,
+            cost=req.cost,
             number_of_seats=req.number_of_seats,
             departure_id=req.departure_id,
             arrival_id=req.arrival_id,
@@ -98,7 +96,7 @@ class RequestCRUD:
         # Подсчитываем количество занятых мест
         occupied_seats = sum(req.number_of_seats for req in requests)
         # Подсчитываем количество свободных мест
-        available_seats = trip.total_seats - occupied_seats
+        available_seats = trip.max_passengers - occupied_seats
         # Проверяем, достаточно ли свободных мест для подтверждения запроса
         if request.number_of_seats > available_seats:
             raise ValueError("Not enough available seats to accept this request")
@@ -123,3 +121,6 @@ class RequestCRUD:
         request.status = models.RequestStatus.ACCEPTED.value
         self.db.commit()
 
+    def get_requests_by_user_id(self, user_id: int) -> list[models.Request]:
+        query = self.db.query(models.Request).filter(models.Request.user_id == user_id)
+        return query.all()

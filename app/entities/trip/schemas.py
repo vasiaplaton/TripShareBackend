@@ -20,9 +20,10 @@ class TripGot(Trip):
 
 class TripCreate(TripGot):
     driver_id: int
+    available_seats: int
 
 
-class TripReturn(BaseModel):
+class TripReturn(TripCreate):
     id: int
 
     status: TripStatus

@@ -15,6 +15,7 @@ class Trip(Base):
     id = Column(Integer, primary_key=True)
 
     max_passengers = Column(Integer, nullable=False)
+    available_seats = Column(Integer, nullable=False)
 
     cost_sum = Column(Integer, nullable=False)
 

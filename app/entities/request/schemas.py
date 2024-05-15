@@ -6,19 +6,19 @@ from app.entities.enums import RequestStatus
 
 
 class Request(BaseModel):
-    number_of_seats: str
-    departure_id: str
-    arrival_id: str
-    trip_id: str
+    number_of_seats: int
+    departure_id: int
+    arrival_id: int
+    trip_id: int
 
 
-class RequestCreate(BaseModel):
-    pass
+class RequestCreate(Request):
+    cost: int
+    user_id: int
 
 
 class RequestGot(Request):
-    cost: str
-
+    pass
 
 class RequestReturn(Request):
     id: int

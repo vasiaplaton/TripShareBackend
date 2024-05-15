@@ -17,8 +17,11 @@ trip_router = APIRouter(
 @trip_router.post("/")
 async def create_trip(schema: schemas.TripGot,
                       current_user: Annotated[User, Depends(User.get_current_user)]) -> schemas.TripReturn:
+    print(schema.car_id)
     """Создаем поездку"""
-    return controller.Trip.create(schemas.TripCreate(**schema.dict(), driver_id=current_user.schema.id)).schema
+    return controller.Trip.create(schemas.TripCreate(**schema.dict(),
+                                                     driver_id=current_user.schema.id,
+                                                     available_seats=schema.max_passengers)).schema
 
 
 @trip_router.get("/as_driver")
