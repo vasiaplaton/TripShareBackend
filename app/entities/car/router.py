@@ -19,7 +19,7 @@ async def create_car(schema: schemas.CarGot,
                      current_user: Annotated[User, Depends(User.get_current_user)],
                      db: Session = Depends(get_db)) -> schemas.CarReturn:
     """Добавляем машину пользователю"""
-    return controller.Car.create(schemas.CarCreate(**schema.dict(), user_id=current_user.schema.id)).schema
+    return controller.Car.create(schemas.CarCreate(**schema.dict(), user_id=current_user.schema.id), db).schema
 
 
 @car_router.get("/me")

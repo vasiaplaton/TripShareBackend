@@ -30,7 +30,7 @@ class Image:
         try:
             img = convert_base64_to_image(base64_file)
         except UnidentifiedImageError:
-            raise Image
+            raise ImageError
         img = check_and_convert_to_jpg(img)
         img = resize_image(img)
 

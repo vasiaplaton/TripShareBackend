@@ -1,6 +1,8 @@
 import random
 from datetime import datetime
 
+from fastapi import HTTPException
+
 from app.database import SessionLocal
 from app.entities.enums import RequestStatus
 from app.entities.request import models
@@ -48,10 +50,13 @@ class RequestCRUD:
             query = query.filter(models.Request.status == status)
         return query.all()
 
-    def update_request_status(self, request_id: int, new_status: str):
+    def update_request_status(self, request_id: int, new_status: str, current_user_id: int):
         request = self.db.query(models.Request).get(request_id)
         if not request:
             raise ValueError("Request with id {} not found".format(request_id))
+
+        if request.user_id != current_user_id:
+            raise HTTPException(status_code=403, detail="Not authorized")
 
         # Если новый статус запроса - "ACCEPTED"
         if new_status == models.RequestStatus.ACCEPTED.value:

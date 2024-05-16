@@ -28,7 +28,10 @@ def create_request(req: RequestGot,
 
 
 @request_router.put("/{request_id}", response_model=RequestReturn)
-def update_request_status(request_id: int, new_status: str, db: Session = Depends(get_db) ):
+def update_request_status(request_id: int,
+                          new_status: str,
+                          current_user: Annotated[User, Depends(User.get_current_user)],
+                          db: Session = Depends(get_db) ):
     try:
         updated_request = RequestCRUD(db).update_request_status(request_id, new_status)
         if not updated_request:
