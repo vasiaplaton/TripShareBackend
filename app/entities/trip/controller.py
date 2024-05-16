@@ -69,14 +69,21 @@ class Trip:
             query = query.filter(Request.status == status)
         return query.all()
 
-    def update_trip(self, db: SessionLocal):
+    def recount_available_seats(self, db: SessionLocal):
         # Получаем все запросы для данной поездки со статусом "ACCEPTED" или "CREATED"
-        requests = self.get_requests_by_trip_id(db.trip_id, status=RequestStatus.ACCEPTED.value)
+        requests = self.get_requests_by_trip_id(db.trip_id, db, status=RequestStatus.ACCEPTED.value)
         # Подсчитываем количество занятых мест
         occupied_seats = sum(req.number_of_seats for req in requests)
         # Подсчитываем количество свободных мест
         available_seats = self.db_entity.max_passengers - occupied_seats
         self.db_entity.available_seats = available_seats
+
+        db.commit()
+
+    def update_trip(self, db: SessionLocal):
+        # Получаем все запросы для данной поездки со статусом "ACCEPTED" или "CREATED"
+        requests = self.get_requests_by_trip_id(db.trip_id, db, status=RequestStatus.ACCEPTED.value)
+        self.recount_available_seats(db)
 
         if len(requests) != 0:
             if self.db_entity.status == TripStatus.NEW.value:
