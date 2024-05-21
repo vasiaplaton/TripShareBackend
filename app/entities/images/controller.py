@@ -14,19 +14,19 @@ class ImageNotFound(Exception):
     """"""
 
 
-class Image:
+class ImageController:
     model = models.Image
     dir = "images/"
 
-    @classmethod
-    def add_image(cls, base64_file: str, db: SessionLocal) -> int:
+    def __init__(self, db: SessionLocal):
+        self.db = db
+
+    def add_image(self, base64_file: str) -> int:
         """
         Метод для добавления картинки
         :param base64_file: jpg файл в кодировки base64
         :return: картинка
         """
-
-        # TODO check format
         try:
             img = convert_base64_to_image(base64_file)
         except UnidentifiedImageError:
@@ -34,10 +34,10 @@ class Image:
         img = check_and_convert_to_jpg(img)
         img = resize_image(img)
 
-        db_img = cls.model(filename="Not impl")
-        db.add(db_img)
-        db.commit()
-        db.refresh(db_img)
+        db_img = self.model(filename="Not impl")
+        self.db.add(db_img)
+        self.db.commit()
+        self.db.refresh(db_img)
 
         save_image(img, db_img.id)
 
@@ -48,8 +48,7 @@ class Image:
         # generate uuid and save
         # push in db
 
-    @classmethod
-    def get_image(cls, img_id: int, size_type: int) -> str:
+    def get_image(self, img_id: int, size_type: int) -> str:
         """
         Метод по получению картинки
         :param img_id:
@@ -62,4 +61,3 @@ class Image:
             raise ImageNotFound
 
         return encode_image_to_base64(img)
-
