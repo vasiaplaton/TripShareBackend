@@ -2,12 +2,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette import status
 
 from . import schemas
 from . import controller
-from app.controllers.exceptions import NotFound
+from app.controllers.exceptions import NotFound, AlreadyExists
 from app.security import Token
 from ...dependencies import get_db
 
@@ -43,7 +44,12 @@ async def login_for_access_token(
 @user_router.post("/")
 async def register_user(schema: schemas.UserCreate, db: Session = Depends(get_db)) -> schemas.UserReturn:
     """Регистрируемся"""
-    return controller.User.create(schema, db).schema
+    try:
+        return controller.User.create(schema, db).schema
+    except AlreadyExists:
+        raise HTTPException(status_code=400, detail="Already exisits")
+    except IntegrityError as e:
+        raise HTTPException(status_code=400, detail=e.detail)
 
 
 @user_router.get("/me")
