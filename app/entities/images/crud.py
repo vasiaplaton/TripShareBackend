@@ -7,17 +7,8 @@ from PIL import Image
 from app.config import IMAGES_FOLDER
 
 
-def id_to_path(idd: int):
-    return os.path.join(IMAGES_FOLDER, str(idd) + ".jpg")
-
-
-def convert_base64_to_image(base64_string):
-    # Decode base64 string to bytes
-    image_data = base64.b64decode(base64_string)
-
-    # Convert bytes to PIL Image
-    img = Image.open(io.BytesIO(image_data))
-    return img
+def id_to_path(idd: int, additional=""):
+    return os.path.join(IMAGES_FOLDER, str(idd) + str(additional) + ".jpg")
 
 
 def check_and_convert_to_jpg(img: Image):
@@ -41,16 +32,5 @@ def resize_image(img: Image, max_dimension=512):
     return img
 
 
-def save_image(img: Image, idd: int):
-    img.save(id_to_path(idd))
-
-
-def open_image(idd: int):
-    with open(id_to_path(idd), "rb") as f:
-        image_data = f.read()
-    return image_data
-
-
-def encode_image_to_base64(image_data):
-    base64_encoded = base64.b64encode(image_data).decode("utf-8")
-    return base64_encoded
+def save_image(img: Image, additional, idd: int):
+    img.save(id_to_path(idd, additional))

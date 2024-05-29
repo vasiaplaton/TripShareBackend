@@ -1,9 +1,11 @@
-from PIL import UnidentifiedImageError
+import io
+import os.path
+
+from PIL import UnidentifiedImageError, Image
 
 from app.database import SessionLocal
 from app.entities.images import models
-from app.entities.images.image_worker import convert_base64_to_image, resize_image, save_image, open_image, \
-    encode_image_to_base64, check_and_convert_to_jpg
+from app.entities.images.crud import resize_image, save_image, check_and_convert_to_jpg, id_to_path
 
 
 class ImageError(Exception):
@@ -14,32 +16,36 @@ class ImageNotFound(Exception):
     """"""
 
 
-class ImageController:
+class ImageCrud:
     model = models.Image
     dir = "images/"
 
     def __init__(self, db: SessionLocal):
         self.db = db
 
-    def add_image(self, base64_file: str) -> int:
+    def add_image(self, image_data: bytes) -> int:
         """
         Метод для добавления картинки
-        :param base64_file: jpg файл в кодировки base64
+        :param image_data: jpg файл
         :return: картинка
         """
         try:
-            img = convert_base64_to_image(base64_file)
+            img = Image.open(io.BytesIO(image_data))
         except UnidentifiedImageError:
             raise ImageError
         img = check_and_convert_to_jpg(img)
-        img = resize_image(img)
 
         db_img = self.model(filename="Not impl")
         self.db.add(db_img)
         self.db.commit()
         self.db.refresh(db_img)
 
-        save_image(img, db_img.id)
+        img = resize_image(img, max_dimension=1000)
+        save_image(img, 0, db_img.id)
+        img = resize_image(img, max_dimension=500)
+        save_image(img, 1, db_img.id)
+        img = resize_image(img, max_dimension=100)
+        save_image(img, 2, db_img.id)
 
         return db_img.id
 
@@ -48,16 +54,14 @@ class ImageController:
         # generate uuid and save
         # push in db
 
-    def get_image(self, img_id: int, size_type: int) -> str:
+    def get_image_path(self, img_id: int, size_type: int = 0) -> str:
         """
         Метод по получению картинки
         :param img_id:
         :param size_type:
         :return:
         """
-        try:
-            img = open_image(img_id)
-        except OSError:
+        path = id_to_path(img_id, size_type)
+        if not os.path.exists(path):
             raise ImageNotFound
-
-        return encode_image_to_base64(img)
+        return path
