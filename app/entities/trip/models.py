@@ -21,7 +21,6 @@ class Trip(Base):
 
     max_two_passengers_in_the_back_seat = Column(Boolean, nullable=False)
     smoking_allowed = Column(Boolean, nullable=False)
-    e_cigarettes_allowed = Column(Boolean, nullable=False)
     pets_allowed = Column(Boolean, nullable=False)
     free_trunk = Column(Boolean, nullable=False)
     status = Column(Enum(TripStatus), nullable=False)

@@ -8,7 +8,6 @@ class Trip(BaseModel):
     cost_sum: int
     max_two_passengers_in_the_back_seat: bool
     smoking_allowed: bool
-    e_cigarettes_allowed: bool
     pets_allowed: bool
     free_trunk: bool
 
