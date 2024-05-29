@@ -16,7 +16,8 @@ review_router = APIRouter(
 
 
 @review_router.post("/", response_model=schemas.ReviewReturn)
-def create_review(review: schemas.ReviewGot, current_user: Annotated[User, Depends(User.get_current_user)], db: Session = Depends(get_db)):
+def create_review(review: schemas.ReviewGot, current_user: Annotated[User, Depends(User.get_current_user)],
+                  db: Session = Depends(get_db)):
     review_crud = ReviewCRUD(db)
     new_review = review_crud.create(schemas.ReviewCreate(**review.dict(), writer_id=current_user.schema.id))
     return new_review
@@ -36,3 +37,16 @@ def delete_review(review_id: int, db: Session = Depends(get_db)):
     review_crud = ReviewCRUD(db)
     review_crud.remove(review_id)
     return {"detail": "Review deleted successfully"}
+
+
+@review_router.get("/me", response_model=list[schemas.ReviewReturn])
+async def get_my_cars(current_user: Annotated[User, Depends(User.get_current_user)],
+                      db: Session = Depends(get_db)) -> list[schemas.ReviewReturn]:
+    """Получаем текущего машины пользователя"""
+    return ReviewCRUD(db).get_reviews_by_user_id(current_user.schema.id)
+
+
+@review_router.get("/user/{user_id}", response_model=list[schemas.ReviewReturn])
+async def get_for_user(user_id: int, db: Session = Depends(get_db)):
+    """Получаем машины пользователя"""
+    return ReviewCRUD(db).get_reviews_by_user_id(user_id)

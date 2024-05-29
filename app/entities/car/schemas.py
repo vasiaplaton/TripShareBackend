@@ -9,7 +9,7 @@ class CarGot(BaseModel):
     color: str
     year_of_manufacture: int
 
-    image0_id: int
+    image0_id: Optional[int] = None
     image1_id: Optional[int] = None
     image2_id: Optional[int] = None
     image3_id: Optional[int] = None

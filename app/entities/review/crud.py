@@ -26,3 +26,7 @@ class ReviewCRUD:
         self.db.commit()
         self.db.refresh(model)
         return model
+
+    def get_reviews_by_user_id(self, user_id: int) -> list[models.Review]:
+        reviews = self.db.query(models.Review).filter(models.Review.user_id == user_id).all()
+        return reviews

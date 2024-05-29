@@ -33,7 +33,7 @@ def update_request_status(request_id: int,
                           current_user: Annotated[User, Depends(User.get_current_user)],
                           db: Session = Depends(get_db) ):
     try:
-        updated_request = RequestCRUD(db).update_request_status(request_id, new_status)
+        updated_request = RequestCRUD(db).update_request_status(request_id, new_status, current_user.schema.id)
         if not updated_request:
             raise HTTPException(status_code=404, detail="Request not found")
         return updated_request
@@ -41,10 +41,14 @@ def update_request_status(request_id: int,
         raise HTTPException(status_code=400, detail=str(ve))
 
 
-@request_router.get("/me", response_model=RequestReturn)
-def create_request(req: RequestCreate, db: Session = Depends(get_db) ):
-    try:
-        new_request = RequestCRUD(db).create(req)
-        return new_request
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
+@request_router.get("/me", response_model=list[RequestReturn])
+async def get_my_cars(current_user: Annotated[User, Depends(User.get_current_user)],
+                      db: Session = Depends(get_db)) -> list[RequestReturn]:
+    return RequestCRUD(db).get_requests_by_user_id(current_user.schema.id)
+
+
+@request_router.get("/user/{user_id}", response_model=list[RequestReturn])
+async def get_for_user(user_id: int, db: Session = Depends(get_db)):
+    return RequestCRUD(db).get_requests_by_user_id(user_id)
+
+

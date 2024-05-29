@@ -14,7 +14,7 @@ car_router = APIRouter(
 )
 
 
-@car_router.post("/", response_model=schemas.CarCreate)
+@car_router.post("/", response_model=schemas.CarReturn)
 async def create_car(schema: schemas.CarGot,
                      current_user: Annotated[User, Depends(User.get_current_user)],
                      db: Session = Depends(get_db)) -> schemas.CarReturn:
@@ -22,14 +22,14 @@ async def create_car(schema: schemas.CarGot,
     return CarCRUD(db).create_car(schemas.CarCreate(**schema.dict(), user_id=current_user.schema.id))
 
 
-@car_router.get("/me", response_model=list[schemas.CarCreate])
+@car_router.get("/me", response_model=list[schemas.CarReturn])
 async def get_my_cars(current_user: Annotated[User, Depends(User.get_current_user)],
                       db: Session = Depends(get_db)) -> list[schemas.CarReturn]:
     """Получаем текущего машины пользователя"""
-    return CarCRUD(db).get_car_by_id(current_user.schema.id)
+    return CarCRUD(db).get_cars_by_user_id(current_user.schema.id)
 
 
-@car_router.get("/user/{user_id}", response_model=list[schemas.CarCreate])
+@car_router.get("/user/{user_id}", response_model=list[schemas.CarReturn])
 async def get_for_user(user_id: int, db: Session = Depends(get_db)):
     """Получаем машины пользователя"""
-    return CarCRUD(db).get_car_by_id(user_id)
+    return CarCRUD(db).get_cars_by_user_id(user_id)

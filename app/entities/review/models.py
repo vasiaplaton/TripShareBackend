@@ -12,7 +12,7 @@ class Review(Base):
     text = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
 
-    image_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=False)
+    image_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=True)
     writer_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
 

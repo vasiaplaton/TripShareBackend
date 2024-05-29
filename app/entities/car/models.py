@@ -15,7 +15,7 @@ class Car(Base):
     color = Column(String, nullable=False)
     year_of_manufacture = Column(Integer, nullable=False)
 
-    image0_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=False)
+    image0_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=True)
     image1_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=True)
     image2_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=True)
     image3_id = Column(Integer, ForeignKey(Image.__pk__, ondelete='CASCADE'), nullable=True)

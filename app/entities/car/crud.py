@@ -14,7 +14,6 @@ class CarCRUD:
         return car
 
     def create_car(self, schema: schemas.CarCreate) -> models.Car:
-        # TODO validate
         db_car = models.Car(**schema.dict())
         self.db.add(db_car)
         self.db.commit()
