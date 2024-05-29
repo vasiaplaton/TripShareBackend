@@ -61,10 +61,16 @@ async def read_users_me(
 
 
 @user_router.put("/me")
-async def read_users_me(
+async def update_users_me(
         schema: schemas.UserUpdate,
         current_user: Annotated[controller.User, Depends(controller.User.get_current_user)],
         db: Session = Depends(get_db)
 ) -> schemas.UserReturn:
     """Обновляем свои данные"""
     return current_user.update(schema, db)
+
+
+@user_router.get("/{user_id}")
+async def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserReturn:
+    """Читаем свои данные"""
+    return controller.User(user_id, db).schema
