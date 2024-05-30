@@ -54,13 +54,20 @@ class Trip:
     @classmethod
     def found_for_user(cls, user_id: int, db: SessionLocal):
         trips = db.query(cls.model).filter(cls.model.driver_id == user_id).all()
-        stops_got = [cls(trip, db) for trip in trips]
-        return stops_got
+        return cls.trips_to_schema(trips, db)
+
+
+    @staticmethod
+    def trips_to_schema(l: list[models.Trip], db: SessionLocal) -> list[schemas.TripReturn]:
+        res = []
+        for i in l:
+            res.append(Trip(i.id, db).schema(db))
+        return res
 
     @classmethod
     def find_trips(cls, place_start: str, place_end: str, db: SessionLocal):
         trips = db.query(cls.model).all()
-        return trips
+        return cls.trips_to_schema(trips, db)
 
     @classmethod
     def get_requests_by_trip_id(cls, trip_id: int , db: SessionLocal, status: str = None) -> list[Request]:

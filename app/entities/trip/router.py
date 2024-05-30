@@ -38,4 +38,8 @@ async def get_trips(current_user: Annotated[User, Depends(User.get_current_user)
 # TODO все поездки
 @trip_router.get("/search", response_model=list[schemas.TripReturn])
 async def search(place_start: str, place_end: str, db: Session = Depends(get_db)):
+    r = controller.Trip.find_trips(place_start, place_end, db)
+    res = []
+    for o in r:
+        res.append(o.schema)
     return controller.Trip.find_trips(place_start, place_end, db)
