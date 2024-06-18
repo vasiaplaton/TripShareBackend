@@ -2,6 +2,7 @@ from typing import Optional
 
 from app.database import models
 from app.database.database import SessionLocal
+from app.entities.enums import TripStatus
 from app.entities.trip import schemas
 
 
@@ -19,15 +20,18 @@ class StopCrud:
     def __init__(self, db: SessionLocal):
         self.db = db
 
-    def get_stops_by_trip_id(self, trip_id: int) -> list[models.Chat]:
-        return self.db.query(models.Stop).filter(models.Stop.trip_id == trip_id).all()
+    def get_by_id(self, id: int) -> models.Stop:
+        return self.db.query(models.Stop).filter(models.Stop.id == id).first()
+
+    def get_stops_by_trip_id(self, trip_id: int) -> list[models.Stop]:
+        return self.db.query(models.Stop).filter(models.Stop.trip_id == trip_id).order_by(models.Stop.num).all()
 
     def create(self,
                schema: schemas.Stop,
                trip_id: int,
                is_start: bool,
                is_stop: bool,
-               commit: bool = True) -> models.Chat:
+               commit: bool = True) -> models.Stop:
 
         db_entity = models.Stop(
             **schema.model_dump(),

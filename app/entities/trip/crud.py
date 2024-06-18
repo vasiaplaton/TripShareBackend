@@ -64,5 +64,15 @@ class TripCrud:
 
         return db_trip
 
+    def get_by_id(self, id: int) -> models.Trip:
+        return self.db.query(models.Trip).filter(models.Trip.id == id).first()
+
     def get_by_driver_id(self, driver_id: int) -> list[models.Trip]:
         return self.db.query(models.Trip).filter(models.Trip.driver_id == driver_id).all()
+
+    def get_all(self):
+        return self.db.query(models.Trip).all()
+
+    def find_for_status(self, statuses: list[TripStatus]) -> list[models.Trip]:
+        return self.db.query(models.Trip).filter(models.Trip.status.in_(statuses)).all()
+

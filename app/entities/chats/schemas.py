@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.entities.user.schemas import UserReturn
+
 
 class ChatCreate(BaseModel):
     user_id_1: int
@@ -11,6 +13,8 @@ class ChatCreate(BaseModel):
 
 class ChatReturn(ChatCreate):
     id: int
+    user_1: Optional[UserReturn] = None
+    user_2: Optional[UserReturn] = None
 
 
 class ChatMessage(BaseModel):

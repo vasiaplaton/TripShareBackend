@@ -46,7 +46,7 @@ async def login_for_access_token(
 async def register_user(schema: schemas.UserCreate, db: Session = Depends(get_db)) -> schemas.UserReturn:
     """Регистрируемся"""
     try:
-        return _model_to_schema(UserCrud(db).create(schema))
+        return _model_to_schema(UserCrud(db).create(schema), db)
     except AlreadyExists:
         raise HTTPException(status_code=400, detail="Already exisits")
     except IntegrityError as e:
@@ -67,13 +67,13 @@ async def update_users_me(
         db: Session = Depends(get_db)
 ) -> schemas.UserReturn:
     """Обновляем свои данные"""
-    return _model_to_schema(UserCrud(db).update(current_user.id, schema))
+    return _model_to_schema(UserCrud(db).update(current_user.id, schema), db)
 
 
 @user_router.get("/{user_id}")
 async def get_user(user_id: int, db: Session = Depends(get_db)) -> schemas.UserReturn:
     """Читаем свои данные"""
-    return _model_to_schema(UserCrud(db).get_user_by_id(user_id))
+    return _model_to_schema(UserCrud(db).get_user_by_id(user_id), db)
 
 
 

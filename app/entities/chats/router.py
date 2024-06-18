@@ -21,7 +21,7 @@ chat_router = APIRouter(
 async def get_my_chats(current_user: Annotated[UserReturn, Depends(get_current_user)],
                        db: Session = Depends(get_db)):
     chats = ChatCrud(db).get_chats_by_user_id(current_user.id)
-    return chat_crud._models_to_schema(chats)
+    return chat_crud._models_to_schema(chats, db)
 
 
 @chat_router.post("/messages", response_model=schemas.ChatMessageReturn)

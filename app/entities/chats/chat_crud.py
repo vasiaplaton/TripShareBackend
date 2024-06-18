@@ -2,20 +2,27 @@ import datetime
 from typing import Optional
 
 from sqlalchemy import or_
-
+from app.entities.user import crud as user_crud
 from app.database import models
 from app.database.database import SessionLocal
 from app.entities.chats import schemas
 
 
-def _model_to_schema(db_item: models.Chat) -> Optional[schemas.ChatReturn]:
+def _model_to_schema(db_item: models.Chat, db: SessionLocal, user_dto: bool = True) -> Optional[schemas.ChatReturn]:
     if db_item is None:
         return None
+    d = db_item.__dict__
+
+    if user_dto:
+        d["user_1"] = user_crud._model_to_schema(user_crud.UserCrud(db).get_user_by_id(db_item.user_id_1), db,
+                                                 car_dto=False)
+        d["user_2"] = user_crud._model_to_schema(user_crud.UserCrud(db).get_user_by_id(db_item.user_id_2), db,
+                                                 car_dto=False)
     return schemas.ChatReturn.model_validate(db_item.__dict__)
 
 
-def _models_to_schema(db_items: list[models.Chat]) -> list[schemas.ChatReturn]:
-    return [_model_to_schema(db_item) for db_item in db_items]
+def _models_to_schema(db_items: list[models.Chat], db: SessionLocal, user_dto: bool = True) -> list[schemas.ChatReturn]:
+    return [_model_to_schema(db_item, db, user_dto) for db_item in db_items]
 
 
 class ChatCrud:

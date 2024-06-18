@@ -4,9 +4,12 @@ import datetime
 from app.entities.enums import TripStatus
 
 
-class Stop(BaseModel):
+class Place(BaseModel):
     place: str
     place_name: str
+
+
+class Stop(Place):
     datetime: datetime.datetime
 
     num: int

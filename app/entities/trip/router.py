@@ -27,3 +27,8 @@ async def create_trip(schema: schemas.TripCreate,
 async def get_as_writer(current_user: Annotated[UserReturn, Depends(get_current_user)],
                        db: Session = Depends(get_db)):
     return crud._models_to_schema(TripCrud(db).get_by_driver_id(current_user.id), db)
+
+
+@trip_router.get("search")
+async def get_all(db: Session = Depends(get_db)):
+    return crud._models_to_schema(TripCrud(db).get_all(), db)

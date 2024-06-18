@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from app.database import models
 from app.database.database import SessionLocal
 from app.dependencies import get_db
+from app.entities.car.crud import CarCrud
+from app.entities.car import crud as car_crud
 from app.entities.exceptions import AlreadyExists, NotFound
 from app.entities.user import schemas
 from app.entities.user.security import oauth2_scheme, get_password_hash
@@ -16,14 +18,17 @@ from config import settings, ALGORITHM, ACCESS_TOKEN_EXPIRE_DAYS
 datetime_format = "%Y-%m-%d %H:%M:%S"
 
 
-def _model_to_schema(db_item: models.User) -> Optional[schemas.UserReturn]:
+def _model_to_schema(db_item: models.User, db: SessionLocal, car_dto: bool = True) -> Optional[schemas.UserReturn]:
     if db_item is None:
         return None
+    d = db_item.__dict__
+    if car_dto:
+        d["cars"] = car_crud._models_to_schema(CarCrud(db).get_by_user_id(db_item.id))
     return schemas.UserReturn.model_validate(db_item.__dict__)
 
 
-def _models_to_schema(db_items: list[models.User]) -> list[schemas.UserReturn]:
-    return [_model_to_schema(db_item) for db_item in db_items]
+def _models_to_schema(db_items: list[models.User], db: SessionLocal) -> list[schemas.UserReturn]:
+    return [_model_to_schema(db_item, db) for db_item in db_items]
 
 
 class UserCrud:
@@ -107,7 +112,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
     except JWTError:
         raise CredentialsException
 
-    return _model_to_schema(UserCrud(db).get_user_by_id(user_id))
+    return _model_to_schema(UserCrud(db).get_user_by_id(user_id), db)
 
 
 def create_access_token(user: models.User) -> str:

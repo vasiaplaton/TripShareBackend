@@ -1,20 +1,25 @@
 from typing import Optional
 
 from app.database import models
+from app.entities.user import crud as user_crud
 from app.database.database import SessionLocal
 from app.entities.review import schemas
 from app.entities.exceptions import NotFound
 from app.entities.user.crud import UserCrud
 
 
-def _model_to_schema(db_item: models.Review) -> Optional[schemas.ReviewReturn]:
+def _model_to_schema(db_item: models.Review, db: SessionLocal, user_dto: bool = True) -> Optional[schemas.ReviewReturn]:
     if db_item is None:
         return None
+    d = db_item.__dict__
+    if user_dto:
+        d["user"] = user_crud._model_to_schema(UserCrud(db).get_user_by_id(db_item.user_id), db, car_dto=False)
+        d["writer"] = user_crud._model_to_schema(UserCrud(db).get_user_by_id(db_item.writer_id), db, car_dto=False)
     return schemas.ReviewReturn.model_validate(db_item.__dict__)
 
 
-def _models_to_schema(db_items: list[models.Car]) -> list[schemas.ReviewReturn]:
-    return [_model_to_schema(db_item) for db_item in db_items]
+def _models_to_schema(db_items: list[models.Car], db: SessionLocal, user_dto: bool = True) -> list[schemas.ReviewReturn]:
+    return [_model_to_schema(db_item, db, user_dto) for db_item in db_items]
 
 
 class ReviewCrud:

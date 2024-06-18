@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from app.entities.car.schemas import CarReturn
+
 
 class UserBase(BaseModel):
     # TODO validate phone
@@ -28,6 +30,7 @@ class UserReturn(UserBase):
     id: int
     rating: Optional[float] = None
     avatar_url: Optional[str] = None
+    cars: Optional[list[CarReturn]] = None
 
 
 class UserUpdate(UserBase):
