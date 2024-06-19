@@ -82,6 +82,7 @@ class UserCrud:
             self.db.flush()
 
         self.db.refresh(item)
+        return item
 
     def get_user_by_phone(self, phone: str):
         user = self.db.query(models.User).filter(models.User.phone == phone).first()

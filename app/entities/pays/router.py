@@ -10,8 +10,8 @@ from app.entities.user.crud import get_current_user
 from app.entities.user.schemas import UserReturn
 
 pays_router = APIRouter(
-    prefix="/trips",
-    tags=["trips"]
+    prefix="/pays",
+    tags=["pays"]
 )
 
 
