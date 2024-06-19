@@ -150,3 +150,17 @@ class Pay(Base):
 
     trip_id = Column(Integer, ForeignKey(Trip.__pk__, ondelete='CASCADE'), nullable=False)
     request_id = Column(Integer, ForeignKey(Request.__pk__, ondelete='CASCADE'), nullable=False)
+
+
+class Place(Base):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    __tablename__ = "places"
+
+    region = Column(String, nullable=False)
+    municipality = Column(String, nullable=False)
+    settlement = Column(String, nullable=False)
+    type = Column(String, nullable=False)
+    address = Column(String, nullable=False)
+    population = Column(Integer, nullable=False)
+    latitude_dd = Column(Float, nullable=False)
+    longitude_dd = Column(Float, nullable=False)

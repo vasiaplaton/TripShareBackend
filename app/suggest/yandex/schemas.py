@@ -29,3 +29,27 @@ class SuggestResult(BaseModel):
 class SuggestResults(BaseModel):
     suggest_reqid: str
     results: list[SuggestResult]
+
+
+class Pointtt(BaseModel):
+    pos: str
+
+
+class GeoObject(BaseModel):
+    Point: Pointtt
+
+
+class GeoObject1(BaseModel):
+    GeoObject: GeoObject
+
+
+class GeoObjectCollection(BaseModel):
+    featureMember: list[GeoObject1]
+
+
+class GeoObjectCollection1(BaseModel):
+    GeoObjectCollection: GeoObjectCollection
+
+
+class CoderResults(BaseModel):
+    response: GeoObjectCollection1
