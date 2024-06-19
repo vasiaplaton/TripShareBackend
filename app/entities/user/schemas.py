@@ -34,4 +34,4 @@ class UserReturn(UserBase):
 
 
 class UserUpdate(UserBase):
-    avatar: Optional[str] = None
+    avatar_url: Optional[str] = None
