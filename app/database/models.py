@@ -145,6 +145,8 @@ class Pay(Base):
 
     amount = Column(Integer, nullable=False)
     status = Column(Enum(PaymentStatus), nullable=False)
+    datetime_cr = Column(DateTime, nullable=False)
+    datetime_fn = Column(DateTime, nullable=True)
     from_user_id = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
     to_user_id = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
 

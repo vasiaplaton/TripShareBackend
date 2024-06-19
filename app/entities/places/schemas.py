@@ -14,3 +14,7 @@ class PlaceCreate(BaseModel):
 
 class PlaceReturn(PlaceCreate):
     id: int
+
+
+class PlaceReturnForUser(PlaceCreate):
+    to_me: bool

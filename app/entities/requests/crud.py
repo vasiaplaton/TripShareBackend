@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from app.database import models
 from app.database.database import SessionLocal
 from app.entities.enums import RequestStatus, TripStatus
+from app.entities.exceptions import NotFound, ValidateError
 from app.entities.requests import schemas
 from app.entities.requests.calc.cost_calc import calculate_cost
 from app.entities.trip.crud import TripCrud
@@ -25,6 +26,9 @@ class RequestCrud:
     def __init__(self, db: SessionLocal):
         self.db = db
 
+    def find_for_id(self, id: int) -> models.Request:
+        return self.db.query(models.Request).filter(models.Request.id == id).first()
+
     def find_for_trip_id(self, trip_id: int) -> list[models.Request]:
         return self.db.query(models.Request).filter(models.Request.trip_id == trip_id).all()
 
@@ -43,7 +47,7 @@ class RequestCrud:
         # Проверяем, достаточно ли свободных мест для создания нового запроса
         # TODO
 
-        #if req.number_of_seats > trip.db_entity.available_seats:
+        # if req.number_of_seats > trip.db_entity.available_seats:
         #    raise ValueError("Not enough available seats to create this request")8from 
         cost = calculate_cost(trip.id, req.departure_id, req.arrival_id, req.number_of_seats, self.db)
 
@@ -63,3 +67,30 @@ class RequestCrud:
         self.db.commit()
         self.db.refresh(new_request)
         return new_request
+
+    def update_status(self, req_id: int, status: RequestStatus, user_id: int):
+        req = self.find_for_id(req_id)
+        if req is None:
+            raise NotFound()
+
+        trip = TripCrud(self.db).get_by_id(req.trip_id)
+
+        if status in [RequestStatus.ACCEPTED, RequestStatus.DECLINED, RequestStatus.FINISHED, RequestStatus.ERROR]:
+            if trip.driver_id != user_id:
+                raise ValidateError()
+
+            # TODO check free spaces
+            req.status = status
+
+            if status == RequestStatus.ACCEPTED:
+                status = RequestStatus.PAYED
+                # TODO create payment
+
+            if status == RequestStatus.FINISHED:
+                # TODO выплатить
+                pass
+
+            if status == RequestStatus.ERROR:
+                # TODO не выплатить
+                pass
+            self.db.commit()

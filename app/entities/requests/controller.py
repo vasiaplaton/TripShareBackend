@@ -5,7 +5,9 @@ from fuzzywuzzy import fuzz
 from app.database.database import SessionLocal
 from app.entities.enums import RequestStatus, TripStatus
 from app.entities.exceptions import NotFound, ValidateError
+from app.entities.places.crud import PlacesCrud
 from app.entities.requests.calc.cost_calc import calculate_cost
+from app.entities.requests.calc.dist_calc import compare_places
 from app.entities.requests.calc.validator_stops import validate_all
 from app.entities.requests.crud import RequestCrud
 from app.entities.requests.schemas import FindRequest, FindResult
@@ -31,7 +33,7 @@ def find_free_spaces(trip_id: int, start_id: int, stop_id: int, db: SessionLocal
     trip, start, stop, all_stops = validate_all(trip_id, start_id, stop_id, db)
 
     requests = find_for_trip_in_between(trip_id, start.num, stop.num, RequestStatus.ACCEPTED, db)
-
+    requests +=  find_for_trip_in_between(trip_id, start.num, stop.num, RequestStatus.PAYED, db)
     occupied = 0
     for stop_needed in all_stops[start.num:stop.num]:
         summm = 0
@@ -44,11 +46,6 @@ def find_free_spaces(trip_id: int, start_id: int, stop_id: int, db: SessionLocal
         # find all accepted requests
 
     return trip.max_passengers - occupied
-
-
-def compare_places(one: Place, two: Place):
-    print(one.place_name, two.place_name)
-    return 100 - fuzz.ratio(one.place_name, two.place_name)
 
 
 def find_trip(req: FindRequest, db: SessionLocal):
@@ -67,7 +64,8 @@ def find_trip(req: FindRequest, db: SessionLocal):
         for stop_l in stops:
             rate = compare_places(
                 Place(place=stop_l.place, place_name=stop_l.place_name),
-                request_start
+                request_start,
+                db
             )
             print(f"Rete {rate}")
             if date_to_find.date() != stop_l.datetime.date():
@@ -88,8 +86,10 @@ def find_trip(req: FindRequest, db: SessionLocal):
         for stop_l in stops[max_good_start.num + 1:]:
             rate = compare_places(
                 Place(place=stop_l.place, place_name=stop_l.place_name),
-                request_stop
+                request_stop,
+                db
             )
+            print(f"Rete {rate}")
 
             if rate <= max_good_end_rated:
                 max_good_end_rated = rate
@@ -106,9 +106,9 @@ def find_trip(req: FindRequest, db: SessionLocal):
             continue
 
         res.append(FindResult(
-            start_distance=max_good_start_rated,
+            start_distance=int(max_good_start_rated),
             start=stop_crud._model_to_schema(max_good_start).model_dump(),
-            end_distance=max_good_end_rated,
+            end_distance=int(max_good_end_rated),
             end=stop_crud._model_to_schema(max_good_end).model_dump(),
             trip=trip_crud._model_to_schema(trip, db).model_dump(),
             cost=calculate_cost(trip.id, max_good_start.id, max_good_end.id, req.needed_seats, db)

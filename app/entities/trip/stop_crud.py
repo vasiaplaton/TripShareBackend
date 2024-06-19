@@ -3,6 +3,8 @@ from typing import Optional
 from app.database import models
 from app.database.database import SessionLocal
 from app.entities.enums import TripStatus
+from app.entities.exceptions import ValidateError
+from app.entities.places.crud import PlacesCrud
 from app.entities.trip import schemas
 
 
@@ -39,6 +41,9 @@ class StopCrud:
             is_start=is_start,
             is_stop=is_stop
         )
+
+        if not PlacesCrud(self.db).get_by_id(int(schema.place)):
+            raise ValidateError()
 
         self.db.add(db_entity)
         if commit:

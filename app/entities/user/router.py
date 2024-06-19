@@ -61,6 +61,7 @@ async def read_users_me(
     return current_user
 
 
+@user_router.post("/me")
 async def update_users_me(
         schema: schemas.UserUpdate,
         current_user: Annotated[schemas.UserReturn, Depends(get_current_user)],

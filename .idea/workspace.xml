@@ -5,16 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="59215ba9-3963-4704-a180-0403f2151612" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/entities/places/crud.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/entities/places/router.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/entities/places/schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/entities/pays/crud.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/entities/pays/schemas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/entities/requests/calc/dist_calc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/database/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/database/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/suggest/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/suggest/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/suggest/yandex.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/suggest/yandex/geo_coder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/suggest/yandex/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/suggest/yandex/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/places/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/places/crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/places/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/places/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/requests/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/requests/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/requests/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/requests/crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/trip/stop_crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/trip/stop_crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/user/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/user/router.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

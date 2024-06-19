@@ -44,8 +44,8 @@ class PlacesCrud:
         query = (self.db.query(models.Place)
                  .add_columns(func.levenshtein(models.Place.address, to_find).label('distance'))
                  .filter(models.Place.address.like(f'%{to_find}%'))
-                 .order_by('distance')
                  .order_by(models.Place.population.desc())
+                 .order_by('distance')
                  .limit(amount)).all()
         print(query)
         res = []
