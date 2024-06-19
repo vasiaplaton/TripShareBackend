@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="59215ba9-3963-4704-a180-0403f2151612" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/entities/pays/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/pays/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entities/user/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/user/crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/trip/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/trip/router.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

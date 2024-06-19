@@ -35,6 +35,6 @@ async def get_all(db: Session = Depends(get_db)):
 
 
 
-@trip_router.get("/{id}}")
+@trip_router.get("/{id}")
 async def get_all(id: int, db: Session = Depends(get_db)) -> schemas.TripReturn:
     return crud._model_to_schema(TripCrud(db).get_by_id(id), db)
