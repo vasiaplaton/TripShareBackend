@@ -6,6 +6,7 @@ from app.entities.requests.router import request_router
 from app.entities.review.router import review_router
 from app.entities.trip.router import trip_router
 from app.entities.user.router import user_router
+from app.suggest.router import yandex_router
 
 app = FastAPI()
 
@@ -16,3 +17,4 @@ app.include_router(chat_router)
 app.include_router(review_router)
 app.include_router(trip_router)
 app.include_router(request_router)
+app.include_router(yandex_router)

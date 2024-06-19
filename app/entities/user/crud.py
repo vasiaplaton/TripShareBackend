@@ -13,7 +13,7 @@ from app.entities.car import crud as car_crud
 from app.entities.exceptions import AlreadyExists, NotFound
 from app.entities.user import schemas
 from app.entities.user.security import oauth2_scheme, get_password_hash
-from config import settings, ALGORITHM, ACCESS_TOKEN_EXPIRE_DAYS
+from app.config import settings, ALGORITHM, ACCESS_TOKEN_EXPIRE_DAYS
 
 datetime_format = "%Y-%m-%d %H:%M:%S"
 

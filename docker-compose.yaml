@@ -9,6 +9,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
+      - SUGGEST_KEY=${SUGGEST_KEY}
+      - GEO_CODE_KEY=${GEO_CODE_KEY}
     depends_on:
       - db
     volumes:
