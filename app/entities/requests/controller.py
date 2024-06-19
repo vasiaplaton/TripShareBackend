@@ -5,8 +5,12 @@ from fuzzywuzzy import fuzz
 from app.database.database import SessionLocal
 from app.entities.enums import RequestStatus, TripStatus
 from app.entities.exceptions import NotFound, ValidateError
+from app.entities.requests.calc.cost_calc import calculate_cost
+from app.entities.requests.calc.validator_stops import validate_all
 from app.entities.requests.crud import RequestCrud
+from app.entities.requests.schemas import FindRequest, FindResult
 from app.entities.trip.crud import TripCrud
+from app.entities.trip import stop_crud, crud as trip_crud
 from app.entities.trip.schemas import Stop, Place
 from app.entities.trip.stop_crud import StopCrud
 
@@ -24,24 +28,7 @@ def find_for_trip_in_between(trip_id: int, start_num: int, stop_num: int, status
 
 
 def find_free_spaces(trip_id: int, start_id: int, stop_id: int, db: SessionLocal):
-    trip = TripCrud(db).get_by_id(trip_id)
-    if not trip:
-        raise NotFound()
-
-    start = StopCrud(db).get_by_id(start_id)
-    if not start:
-        raise NotFound("Cant found start")
-    if start.trip_id != trip_id:
-        raise ValidateError("Start not belongs to trip")
-
-    stop = StopCrud(db).get_by_id(stop_id)
-    if not stop:
-        raise NotFound("Cant found stop")
-    if stop.trip_id != trip_id:
-        raise ValidateError("Stop not belongs to trip")
-
-    all_stops = StopCrud(db).get_stops_by_trip_id(trip_id)
-    all_stops.sort(key=lambda l: l.num)
+    trip, start, stop, all_stops = validate_all(trip_id, start_id, stop_id, db)
 
     requests = find_for_trip_in_between(trip_id, start.num, stop.num, RequestStatus.ACCEPTED, db)
 
@@ -60,52 +47,72 @@ def find_free_spaces(trip_id: int, start_id: int, stop_id: int, db: SessionLocal
 
 
 def compare_places(one: Place, two: Place):
-    return 100 - int(fuzz.ratio(one.place_name, two.place_name))
+    print(one.place_name, two.place_name)
+    return 100 - fuzz.ratio(one.place_name, two.place_name)
 
 
-def find_trip(start: Place, stop: Place, start_date: datetime.datetime, needed_seats: int, db: SessionLocal):
+def find_trip(req: FindRequest, db: SessionLocal):
+    request_start = req.start
+    request_stop = req.end
+    date_to_find = req.date
+
     trips = TripCrud(db).find_for_status([TripStatus.NEW, TripStatus.BRONED])
     res = []
     for trip in trips:
+        print("AAA")
         stops = StopCrud(db).get_stops_by_trip_id(trip.id)
 
-        max_good = None
-        max_good_rated = 0
+        max_good_start = None
+        max_good_start_rated = 100
         for stop_l in stops:
             rate = compare_places(
                 Place(place=stop_l.place, place_name=stop_l.place_name),
-                start
+                request_start
             )
-            if start_date.date() != stop_l.date():
+            print(f"Rete {rate}")
+            if date_to_find.date() != stop_l.datetime.date():
+                print(f"Skipping by date, {date_to_find.date()} {stop_l.datetime.date()}")
                 continue
 
-            if rate < max_good_rated:
-                max_good_rated = rate
-                max_good = stop_l
+            if rate <= max_good_start_rated:
+                max_good_start_rated = rate
+                max_good_start = stop_l
 
-        if not max_good:
+        if not max_good_start:
             continue
 
+        print("Found start")
+
         max_good_end = None
-        max_good_end_rated = 0
-        for stop_l in stops[max_good.num+1:]:
+        max_good_end_rated = 100
+        for stop_l in stops[max_good_start.num + 1:]:
             rate = compare_places(
                 Place(place=stop_l.place, place_name=stop_l.place_name),
-                stop
+                request_stop
             )
 
-            if rate < max_good_end_rated:
+            if rate <= max_good_end_rated:
                 max_good_end_rated = rate
                 max_good_end = stop_l
 
         if not max_good_end:
             continue
 
-        res.append(
-            {"start_distance": max_good_rated,
-             "start": max_good.id,
-             "end_distance": max_good_end_rated,
-             "end": max_good_end.id}
+        print("FOUND^ check spaces")
+        free_spaces = find_free_spaces(trip.id, max_good_start.id, max_good_end.id, db)
+        print(free_spaces)
+
+        if req.needed_seats > free_spaces:
+            continue
+
+        res.append(FindResult(
+            start_distance=max_good_start_rated,
+            start=stop_crud._model_to_schema(max_good_start).model_dump(),
+            end_distance=max_good_end_rated,
+            end=stop_crud._model_to_schema(max_good_end).model_dump(),
+            trip=trip_crud._model_to_schema(trip, db).model_dump(),
+            cost=calculate_cost(trip.id, max_good_start.id, max_good_end.id, req.needed_seats, db)
+            )
         )
 
     return res

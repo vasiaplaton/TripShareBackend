@@ -1,14 +1,14 @@
 from sqlalchemy import Column, Integer, String, Boolean, Enum, ForeignKey, DateTime, Float
 
 from app.database.database import Base
-from app.entities.enums import TripStatus, RequestStatus
+from app.entities.enums import TripStatus, RequestStatus, PaymentStatus
 
 
 class User(Base):
     __tablename__ = "users"
     __pk__ = "users.id"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     phone = Column(String, nullable=False, unique=True)
     password_hash = Column(String, nullable=False)
@@ -35,7 +35,7 @@ class Car(Base):
     __tablename__ = "cars"
     __pk__ = "cars.id"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     brand = Column(String, nullable=False)
     model = Column(String, nullable=False)
@@ -51,7 +51,7 @@ class Trip(Base):
     __tablename__ = "trips"
     __pk__ = "trips.id"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     max_passengers = Column(Integer, nullable=False)
 
@@ -71,7 +71,7 @@ class Stop(Base):
     __tablename__ = "stops"
     __pk__ = "stops.id"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     place = Column(String, nullable=False)
     place_name = Column(String, nullable=False)
@@ -87,7 +87,7 @@ class Stop(Base):
 class Review(Base):
     __tablename__ = "reviews"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     text = Column(String, nullable=False)
     rating = Column(Integer, nullable=False)
@@ -99,8 +99,8 @@ class Review(Base):
 
 class Request(Base):
     __tablename__ = "requests"
-
-    id = Column(Integer, primary_key=True)
+    __pk__ = "requests.id"
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     request_datetime = Column(DateTime, nullable=False)
     status = Column(Enum(RequestStatus), nullable=False)
@@ -119,7 +119,7 @@ class Chat(Base):
     __tablename__ = "chats"
     __pk__ = "chats.id"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     user_id_1 = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
     user_id_2 = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
@@ -128,7 +128,7 @@ class Chat(Base):
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     text = Column(String, nullable=True)
 
@@ -137,3 +137,16 @@ class ChatMessage(Base):
     image_url = Column(String, nullable=True)
     sender_id = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
     chat_id = Column(Integer, ForeignKey(Chat.__pk__, ondelete='CASCADE'), nullable=False)
+
+
+class Pay(Base):
+    __tablename__ = "pay"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    amount = Column(Integer, nullable=False)
+    status = Column(Enum(PaymentStatus), nullable=False)
+    from_user_id = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
+    to_user_id = Column(Integer, ForeignKey(User.__pk__, ondelete='CASCADE'), nullable=False)
+
+    trip_id = Column(Integer, ForeignKey(Trip.__pk__, ondelete='CASCADE'), nullable=False)
+    request_id = Column(Integer, ForeignKey(Request.__pk__, ondelete='CASCADE'), nullable=False)

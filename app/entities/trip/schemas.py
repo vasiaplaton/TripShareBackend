@@ -2,6 +2,7 @@ from pydantic import BaseModel
 import datetime
 
 from app.entities.enums import TripStatus
+from app.entities.trip.comfrots_schemas import ComfortsInTrip
 
 
 class Place(BaseModel):
@@ -22,14 +23,9 @@ class StopReturn(Stop):
     trip_id: int
 
 
-class TripBase(BaseModel):
+class TripBase(ComfortsInTrip):
     max_passengers: int
     cost_sum: int
-
-    max_two_passengers_in_the_back_seat: bool
-    smoking_allowed: bool
-    pets_allowed: bool
-    free_trunk: bool
 
 
 class TripCreate(TripBase):

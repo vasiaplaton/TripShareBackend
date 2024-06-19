@@ -3,6 +3,8 @@ import datetime
 from pydantic import BaseModel
 
 from app.entities.enums import RequestStatus
+from app.entities.trip.comfrots_schemas import ComfortsInTrip
+from app.entities.trip.schemas import StopReturn, TripReturn, Place
 
 
 class Request(BaseModel):
@@ -19,3 +21,20 @@ class RequestReturn(Request):
     request_datetime: datetime.datetime
     status: RequestStatus
     status_change_datetime: datetime.datetime
+
+
+class FindRequest(BaseModel):
+    start: Place
+    end: Place
+    comforts: ComfortsInTrip
+    date: datetime.datetime
+    needed_seats: int
+
+
+class FindResult(BaseModel):
+    start_distance: int
+    start: StopReturn
+    end_distance: int
+    end: StopReturn
+    trip: TripReturn
+    cost: int
