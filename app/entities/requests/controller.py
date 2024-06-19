@@ -33,7 +33,7 @@ def find_free_spaces(trip_id: int, start_id: int, stop_id: int, db: SessionLocal
     trip, start, stop, all_stops = validate_all(trip_id, start_id, stop_id, db)
 
     requests = find_for_trip_in_between(trip_id, start.num, stop.num, RequestStatus.ACCEPTED, db)
-    requests +=  find_for_trip_in_between(trip_id, start.num, stop.num, RequestStatus.PAYED, db)
+    requests += find_for_trip_in_between(trip_id, start.num, stop.num, RequestStatus.PAYED, db)
     occupied = 0
     for stop_needed in all_stops[start.num:stop.num]:
         summm = 0

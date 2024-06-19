@@ -29,6 +29,6 @@ async def get_as_writer(current_user: Annotated[UserReturn, Depends(get_current_
     return crud._models_to_schema(TripCrud(db).get_by_driver_id(current_user.id), db)
 
 
-@trip_router.get("search")
+@trip_router.get("/get_all")
 async def get_all(db: Session = Depends(get_db)):
     return crud._models_to_schema(TripCrud(db).get_all(), db)

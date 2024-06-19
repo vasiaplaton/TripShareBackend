@@ -5,8 +5,10 @@ from sqlalchemy import or_
 
 from app.database import models
 from app.database.database import SessionLocal
-from app.entities.enums import RequestStatus, TripStatus
+from app.entities.enums import RequestStatus, TripStatus, PaymentStatus
 from app.entities.exceptions import NotFound, ValidateError
+from app.entities.pays.crud import PaysCrud
+from app.entities.pays.schemas import Pay
 from app.entities.requests import schemas
 from app.entities.requests.calc.cost_calc import calculate_cost
 from app.entities.trip.crud import TripCrud
@@ -83,14 +85,27 @@ class RequestCrud:
             req.status = status
 
             if status == RequestStatus.ACCEPTED:
-                status = RequestStatus.PAYED
-                # TODO create payment
+                req.status = RequestStatus.PAYED
+                PaysCrud(self.db).create(
+                    Pay(
+                        amount=req.cost,
+                        status=PaymentStatus.CREATED,
+                        datetime_cr=datetime.datetime.now(),
+                        from_user_id=req.user_id,
+                        to_user_id=trip.driver_id,
+                        trip_id=trip.id,
+                        request_id=req.id
+                    )
+                )
 
-            if status == RequestStatus.FINISHED:
-                # TODO выплатить
-                pass
+            elif status == RequestStatus.FINISHED:
+                res = PaysCrud(self.db).get_for_request(request_id=req.id)
+                if res:
+                    res.status = PaymentStatus.OK
 
-            if status == RequestStatus.ERROR:
-                # TODO не выплатить
-                pass
+            elif status == RequestStatus.ERROR or status == RequestStatus.DECLINED:
+                res = PaysCrud(self.db).get_for_request(request_id=req.id)
+                if res:
+                    res.status = PaymentStatus.RETURNED
+
             self.db.commit()
