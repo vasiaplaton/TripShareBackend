@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
@@ -18,14 +18,14 @@ trip_router = APIRouter(
 @trip_router.post("/")
 async def create_trip(schema: schemas.TripCreate,
                       current_user: Annotated[UserReturn, Depends(get_current_user)],
-                      db: Session = Depends(get_db) ) -> schemas.TripReturn:
+                      db: Session = Depends(get_db)) -> schemas.TripReturn:
     """Создаем поездку"""
     return crud._model_to_schema(TripCrud(db).create(schema, current_user.id), db)
 
 
 @trip_router.get("/me_as_driver")
 async def get_as_writer(current_user: Annotated[UserReturn, Depends(get_current_user)],
-                       db: Session = Depends(get_db)):
+                        db: Session = Depends(get_db)):
     return crud._models_to_schema(TripCrud(db).get_by_driver_id(current_user.id), db)
 
 
@@ -34,7 +34,9 @@ async def get_all(db: Session = Depends(get_db)):
     return crud._models_to_schema(TripCrud(db).get_all(), db)
 
 
-
 @trip_router.get("/{id}")
 async def get_all(id: int, db: Session = Depends(get_db)) -> schemas.TripReturn:
-    return crud._model_to_schema(TripCrud(db).get_by_id(id), db)
+    r = TripCrud(db).get_by_id(id)
+    if not r:
+        raise HTTPException(status_code=404)
+    return crud._model_to_schema(r, db)
