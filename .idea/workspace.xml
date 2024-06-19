@@ -5,15 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="59215ba9-3963-4704-a180-0403f2151612" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/entities/pays/router.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/split.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entities/pays/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/pays/crud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entities/requests/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/requests/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/entities/requests/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/requests/crud.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/entities/requests/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/requests/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entities/trip/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/trip/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/requests/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/requests/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/trip/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/trip/crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entities/trip/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entities/trip/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

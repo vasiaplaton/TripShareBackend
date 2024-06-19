@@ -4,13 +4,14 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
-from app.entities.enums import RequestStatus
+from app.entities.enums import RequestStatus, TripStatus
 from app.entities.exceptions import NotFound
 from app.entities.requests import schemas
 from app.entities.requests.controller import find_trip
 from app.entities.requests.crud import RequestCrud, _model_to_schema
-from app.entities.requests.schemas import RequestReturn, FindResult, FindRequest
+from app.entities.requests.schemas import RequestReturn, FindResult, FindRequest, RequestReturnWithTrip
 from app.entities.trip.crud import TripCrud
+from app.entities.trip import crud as trip_crud
 from app.entities.user.crud import get_current_user
 from app.entities.user.schemas import UserReturn
 
@@ -55,3 +56,38 @@ def finish_trip(trip_id: int,
         raise NotFound
     if not res.driver_id == current_user.id:
         raise
+
+    res.status = TripStatus.FINISHED
+    for i in RequestCrud(db).find_for_trip_id(res.id):
+        RequestCrud(db).update_status(i.id, RequestStatus.FINISHED, current_user.id)
+
+
+@request_router.post("/error_trip_id/{trip_id}")
+def finish_trip_error(trip_id: int,
+                current_user: Annotated[UserReturn, Depends(get_current_user)],
+                db: Session = Depends(get_db)):
+    res = TripCrud(db).get_by_id(trip_id)
+    if not res:
+        raise NotFound
+    if not res.driver_id == current_user.id:
+        raise
+
+    res.status = TripStatus.FINISHED
+    for i in RequestCrud(db).find_for_trip_id(res.id):
+        RequestCrud(db).update_status(i.id, RequestStatus.ERROR, current_user.id)
+
+
+@request_router.get("/me")
+def get_my_requests(current_user: Annotated[UserReturn, Depends(get_current_user)],
+                    db: Session = Depends(get_db)) -> list[RequestReturnWithTrip]:
+    res = RequestCrud(db).find_for_user_id(current_user.id)
+    res1 = []
+    for r in res:
+        print(TripCrud(db).get_by_id(r.trip_id).__dict__)
+        res1.append(
+            RequestReturnWithTrip(
+                **r.__dict__,
+                trip=trip_crud._model_to_schema(TripCrud(db).get_by_id(r.trip_id), db, stops_dto=True).model_dump()
+            ))
+
+    return res1

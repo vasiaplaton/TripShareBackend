@@ -34,6 +34,9 @@ class RequestCrud:
     def find_for_trip_id(self, trip_id: int) -> list[models.Request]:
         return self.db.query(models.Request).filter(models.Request.trip_id == trip_id).all()
 
+    def find_for_user_id(self, user_id: int) -> list[models.Request]:
+        return self.db.query(models.Request).filter(models.Request.user_id == user_id).all()
+
     def find_for_trip_id_and_status(self, trip_id: int, status: RequestStatus) -> list[models.Request]:
         return (self.db.query(models.Request).
                 filter(models.Request.trip_id == trip_id).

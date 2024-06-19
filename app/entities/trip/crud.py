@@ -8,14 +8,15 @@ from app.entities.trip import schemas, stop_crud
 from app.entities.trip.stop_crud import StopCrud
 
 
-def _model_to_schema(db_item: models.Trip, db: SessionLocal) -> Optional[schemas.TripReturn]:
+def _model_to_schema(db_item: models.Trip, db: SessionLocal, stops_dto: Optional[bool] = True) -> Optional[schemas.TripReturn]:
     if db_item is None:
         return None
     db.commit()
-    stops = StopCrud(db).get_stops_by_trip_id(db_item.id)
-    stops = stop_crud._models_to_schema(stops)
     d = db_item.__dict__
-    d["stops"] = stops
+    if stops_dto:
+        stops = StopCrud(db).get_stops_by_trip_id(db_item.id)
+        stops = stop_crud._models_to_schema(stops)
+        d["stops"] = stops
     # TODO add stops
     return schemas.TripReturn.model_validate(d)
 

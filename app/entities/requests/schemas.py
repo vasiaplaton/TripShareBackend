@@ -23,6 +23,10 @@ class RequestReturn(Request):
     status_change_datetime: datetime.datetime
 
 
+class RequestReturnWithTrip(RequestReturn):
+    trip: TripReturn
+
+
 class FindRequest(BaseModel):
     start: Place
     end: Place

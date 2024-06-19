@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 import datetime
 
@@ -38,4 +40,4 @@ class TripReturn(TripCreate):
     driver_id: int
 
     status: TripStatus
-    stops: list[StopReturn]
+    stops: Optional[list[StopReturn]] = None
