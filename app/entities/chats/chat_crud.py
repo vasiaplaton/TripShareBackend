@@ -22,7 +22,7 @@ def _model_to_schema(db_item: models.Chat, db: SessionLocal, user_dto: bool = Tr
 
 
 def _models_to_schema(db_items: list[models.Chat], db: SessionLocal, user_dto: bool = True) -> list[schemas.ChatReturn]:
-    return [_model_to_schema(db_item, db, user_dto) for db_item in db_items]
+    return [_model_to_schema(db_item, db, user_dto=False) for db_item in db_items]
 
 
 class ChatCrud:
