@@ -12,16 +12,29 @@ from app.entities.pays.schemas import Pay
 from app.entities.requests import schemas
 from app.entities.requests.calc.cost_calc import calculate_cost
 from app.entities.trip.crud import TripCrud
+from app.entities.user.crud import UserCrud
 
 
-def _model_to_schema(db_item: models.Chat) -> Optional[schemas.RequestReturn]:
+def _model_to_schema(db_item: models.Request) -> Optional[schemas.RequestReturn]:
     if db_item is None:
         return None
     return schemas.RequestReturn.model_validate(db_item.__dict__)
 
 
-def _models_to_schema(db_items: list[models.Chat]) -> list[schemas.RequestReturn]:
+def _models_to_schema(db_items: list[models.Request]) -> list[schemas.RequestReturn]:
     return [_model_to_schema(db_item) for db_item in db_items]
+
+
+def _model_to_schema_user(db_item: models.Request, db) -> Optional[schemas.RequestReturnUser]:
+    if db_item is None:
+        return None
+    d = db_item.__dict__
+    d["user"] = UserCrud(db).get_user_by_id(db_item.user_id)
+    return schemas.RequestReturnUser.model_validate(d)
+
+
+def _models_to_schema_user(db_items: list[models.Request], db) -> list[schemas.RequestReturnUser]:
+    return [_model_to_schema_user(db_item, db) for db_item in db_items]
 
 
 class RequestCrud:

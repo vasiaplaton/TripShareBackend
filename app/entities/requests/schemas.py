@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from app.entities.enums import RequestStatus
 from app.entities.trip.comfrots_schemas import ComfortsInTrip
 from app.entities.trip.schemas import StopReturn, TripReturn, Place
+from app.entities.user.schemas import UserReturn
 
 
 class Request(BaseModel):
@@ -21,6 +22,10 @@ class RequestReturn(Request):
     request_datetime: datetime.datetime
     status: RequestStatus
     status_change_datetime: datetime.datetime
+
+
+class RequestReturnUser(RequestReturn):
+    user: UserReturn
 
 
 class RequestReturnWithTrip(RequestReturn):
