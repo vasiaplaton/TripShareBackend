@@ -9,7 +9,8 @@ from app.entities.exceptions import NotFound
 from app.entities.requests import schemas
 from app.entities.requests.controller import find_trip
 from app.entities.requests.crud import RequestCrud, _model_to_schema, _models_to_schema, _models_to_schema_user
-from app.entities.requests.schemas import RequestReturn, FindResult, FindRequest, RequestReturnWithTrip
+from app.entities.requests.schemas import RequestReturn, FindResult, FindRequest, RequestReturnWithTrip, \
+    RequestReturnUser
 from app.entities.trip.crud import TripCrud
 from app.entities.trip import crud as trip_crud
 from app.entities.user.crud import get_current_user
@@ -28,7 +29,7 @@ def create_request(req: schemas.Request,
     return _model_to_schema(RequestCrud(db).create(req, user_id=current_user.id))
 
 
-@request_router.post("/for_trip/{trip_id}", response_model=RequestReturn)
+@request_router.post("/for_trip/{trip_id}", response_model=list[RequestReturnUser])
 def find_for_trip_request(trip_id: int,
                    current_user: Annotated[UserReturn, Depends(get_current_user)],
                    db: Session = Depends(get_db)):

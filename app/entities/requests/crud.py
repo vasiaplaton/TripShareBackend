@@ -29,7 +29,7 @@ def _model_to_schema_user(db_item: models.Request, db) -> Optional[schemas.Reque
     if db_item is None:
         return None
     d = db_item.__dict__
-    d["user"] = user_crud._model_to_schema(UserCrud(db).get_user_by_id(db_item.user_id), db, car_dto=False)
+    d["user"] = UserCrud(db).get_user_by_id(db_item.user_id).__dict__
     return schemas.RequestReturnUser.model_validate(d)
 
 
