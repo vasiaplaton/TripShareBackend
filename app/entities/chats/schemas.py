@@ -13,8 +13,8 @@ class ChatCreate(BaseModel):
 
 class ChatReturn(ChatCreate):
     id: int
-    user_1: Optional[UserReturn] = None
-    user_2: Optional[UserReturn] = None
+    # user_1: Optional[UserReturn] = None
+    # user_2: Optional[UserReturn] = None
 
 
 class ChatMessage(BaseModel):
