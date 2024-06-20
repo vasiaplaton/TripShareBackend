@@ -13,7 +13,7 @@ from app.entities.requests import schemas
 from app.entities.requests.calc.cost_calc import calculate_cost
 from app.entities.trip.crud import TripCrud
 from app.entities.user.crud import UserCrud
-
+from app.entities.user import crud as user_crud
 
 def _model_to_schema(db_item: models.Request) -> Optional[schemas.RequestReturn]:
     if db_item is None:
@@ -29,7 +29,7 @@ def _model_to_schema_user(db_item: models.Request, db) -> Optional[schemas.Reque
     if db_item is None:
         return None
     d = db_item.__dict__
-    d["user"] = UserCrud(db).get_user_by_id(db_item.user_id)
+    d["user"] = user_crud._model_to_schema(UserCrud(db).get_user_by_id(db_item.user_id))
     return schemas.RequestReturnUser.model_validate(d)
 
 
